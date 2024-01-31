@@ -12,10 +12,9 @@ export default function PostEditForm() {
 
   const [content, setContent] = useState("");
   const [post, setPOst] = useState<PostProps>();
-  const { user } = useContext(AuthContext);
   const navigate = useNavigate();
 
-  const handelFileUpload = () => {};
+  const handelFileUpload = () => { };
 
   const getPost = useCallback(async () => {
     if (params.id) {
@@ -43,7 +42,6 @@ export default function PostEditForm() {
         toast.success("게시글을 수정했습니다.");
       }
     } catch (e: any) {
-      console.log(e);
 
       toast.error(e?.code);
     }
