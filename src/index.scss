@@ -172,6 +172,38 @@ body {
     margin-top: 8px;
     width: calc(100% - 32px);
   }
+    outline: none;
+    resize: none;
+    margin-top: 8px;
+    width: calc(100% - 32px);
+  }
+  &__hashtags {
+    padding: 16px;
+    border-bottom: 1px solid $border;
+
+    &-outputs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+
+    &-tag {
+      font-size: 14px;
+      border: 1px solid $primaryColor;
+      color: $primaryColor;
+      border-radius: 10px;
+      padding: 2px 8px;
+      margin-right: 6px;
+      cursor: pointer;
+
+      &:hover,
+      &:focus {
+        counter-reset: $activeBorder;
+        border: 1px solid $activeBorder;
+      }
+    }
+  }
 
   &__textarea {
     font-family: $font;
@@ -220,6 +252,19 @@ body {
 
 // Post Layout
 .post {
+  &__header {
+    button {
+      border: none;
+      padding: 16px;
+    }
+
+    &-btn {
+      width: 20px;
+      height: 20px;
+      cursor: pointer;
+    }
+  }
+
   &__no-posts {
     padding: 16px;
 

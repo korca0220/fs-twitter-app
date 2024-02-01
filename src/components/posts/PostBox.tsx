@@ -1,9 +1,12 @@
 import AuthContext from "context/AuthContext";
+import { deleteDoc, doc } from "firebase/firestore";
+import { db } from "firebaseApp";
 import { PostProps } from "pages/home";
 import { useContext } from "react";
 import { AiFillHeart } from "react-icons/ai";
 import { FaRegComment, FaUserCircle } from "react-icons/fa";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 interface PostBoxProps {
   post: PostProps;
@@ -11,8 +14,18 @@ interface PostBoxProps {
 
 export default function PostBox({ post }: PostBoxProps) {
   const { user } = useContext(AuthContext);
+  const navigate = useNavigate();
 
-  const handleDelete = () => {};
+  const handleDelete = async () => {
+    const confirm = window.confirm("해당 게시글을 삭제하시겠습니까?");
+
+    if (confirm) {
+      await deleteDoc(doc(db, "posts", post.id));
+      toast.success("게시글이 삭제되었습니다.");
+
+      navigate("/");
+    }
+  };
 
   return (
     <div className="post__box">
@@ -28,6 +41,13 @@ export default function PostBox({ post }: PostBoxProps) {
             <div className="post__createdAt">{post.createdAt}</div>
           </div>
           <div className="post__box-content">{post.content}</div>
+          <div className="post-form__hashtags-outputs">
+            {post?.hashTags?.map((tag, index) => (
+              <span className="post-form__hashtags-tag" key={index}>
+                #{tag}
+              </span>
+            ))}
+          </div>
         </div>
       </Link>
       <div className="post__box-footer">
