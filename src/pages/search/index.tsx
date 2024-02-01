@@ -17,7 +17,7 @@ export default function SearchPage() {
   const { user } = useContext(AuthContext);
 
   const onChange = (e: any) => {
-     (e?.target?.value.trim());
+    setTagQuery(e?.target?.value.trim());
   };
 
   useEffect(() => {
@@ -25,7 +25,7 @@ export default function SearchPage() {
       const postRef = collection(db, "posts");
       const postQuery = query(
         postRef,
-        where("hashTag", "array-contains-any", [tagQuery]),
+        where("hashTags", "array-contains-any", [tagQuery]),
         orderBy("createdAt", "desc")
       );
 
@@ -34,6 +34,8 @@ export default function SearchPage() {
           ...doc.data(),
           id: doc.id,
         }));
+
+        console.log(dataObj);
 
         setPosts(dataObj as PostProps[]);
       });
