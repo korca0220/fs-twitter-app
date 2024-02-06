@@ -1,21 +1,51 @@
 import AuthContext from "context/AuthContext";
 import { addDoc, collection } from "firebase/firestore";
-import { db } from "firebaseApp";
+import { getDownloadURL, ref, uploadString } from "firebase/storage";
+import { db, storage } from "firebaseApp";
 import React, { useContext, useState } from "react";
 import { FiImage } from "react-icons/fi";
 import { toast } from "react-toastify";
+import { v4 as uuidV4 } from "uuid";
 
 export default function PostForm() {
   const [content, setContent] = useState("");
   const { user } = useContext(AuthContext);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [hashTag, setHashTag] = useState<string>("");
   const [tags, setTags] = useState<string[]>([]);
-  const handelFileUpload = () => {};
+  const [imageFile, setImageFile] = useState<string | null>("");
+
+  const handelFileUpload = (e: any) => {
+    const {
+      target: { files },
+    } = e;
+
+    const file = files?.[0];
+    const fileReader = new FileReader();
+    fileReader?.readAsDataURL(file);
+
+    fileReader.onloadend = (e: any) => {
+      const { result } = e?.currentTarget;
+      setImageFile(result);
+    };
+  };
 
   const onSubmit = async (e: any) => {
+    setIsSubmitting(true);
     e.preventDefault();
+    const key = `${user?.uid}/${uuidV4()}`;
+    const storageRef = ref(storage, key);
 
     try {
+      // 이미지 먼저 업로드(있다면)
+      let imageUrl = "";
+      if (imageFile) {
+        const data = await uploadString(storageRef, imageFile, "data_url");
+
+        imageUrl = await getDownloadURL(data?.ref);
+      }
+
+      // 업로드된 이미지를 다운로드 url 업데이트
       await addDoc(collection(db, "posts"), {
         content: content,
         createdAt: new Date()?.toLocaleDateString("ko", {
@@ -26,13 +56,16 @@ export default function PostForm() {
         uid: user?.uid,
         email: user?.email,
         hashTags: tags,
+        imageUrl,
       });
 
       setTags([]);
       setHashTag("");
       setContent("");
+      setImageFile(null);
 
       toast.success("게시글을 생성했습니다.");
+      setIsSubmitting(false);
     } catch (e: any) {
       console.log(e);
 
@@ -67,6 +100,10 @@ export default function PostForm() {
         setHashTag("");
       }
     }
+  };
+
+  const handleDeleteImage = () => {
+    setImageFile(null);
   };
 
   return (
@@ -104,20 +141,36 @@ export default function PostForm() {
         ></input>
       </div>
       <div className="post-form__submit-area">
-        <div className="post-form__file">
-          <FiImage className="post-form__file-icon" />
+        <div className="post-form__image-area">
+          <label htmlFor="file-input" className="post-form__file">
+            <FiImage className="post-form__file-icon" />
+          </label>
         </div>
         <input
           type="file"
-          name="input-file"
+          name="file-input"
+          id="file-input"
           accept="image/*"
           onChange={handelFileUpload}
           className="hidden"
         ></input>
+        {imageFile && (
+          <div className="post-form__attachment">
+            <img src={imageFile} alt="attachment" width={100} height={100} />
+            <button
+              className="post-form__clear-btn"
+              type="button"
+              onClick={handleDeleteImage}
+            >
+              Clear
+            </button>
+          </div>
+        )}
         <input
           type="submit"
           value="Tweet"
           className="post-form__submit-btn"
+          disabled={isSubmitting}
         ></input>
       </div>
     </form>
