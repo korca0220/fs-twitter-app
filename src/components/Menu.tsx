@@ -8,6 +8,8 @@ import { MdLogin, MdLogout } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
+import { AiOutlineSearch } from "react-icons/ai";
+
 export default function MenuList() {
   const { user } = useContext(AuthContext);
 
@@ -37,6 +39,10 @@ export default function MenuList() {
         <button type="button" onClick={() => navigate("/profile")}>
           <BiUserCircle />
           Profile
+        </button>
+        <button type="button" onClick={() => navigate("/search")}>
+          <AiOutlineSearch />
+          Search
         </button>
         {user === null ? (
           <button type="button" onClick={() => navigate("/user/login")}>
