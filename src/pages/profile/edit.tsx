@@ -14,6 +14,8 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { v4 as uuidV4 } from "uuid";
 
+const STORAGE_DOWNLOAD_URL_STRING = "https://firebasestorage.googleapis.com";
+
 export default function ProfileEdit() {
   const [displayName, setDisplayName] = useState<string>("");
   const [imageUrl, setImageUrl] = useState<string | null>("");
@@ -54,25 +56,31 @@ export default function ProfileEdit() {
     e.preventDefault();
 
     try {
-      // if (user?.photoURL) {
-      //   const imageRef = ref(storage, user?.photoURL);
-      //   await deleteObject(imageRef);
-      // }
+      if (
+        user?.photoURL &&
+        user?.photoURL?.includes(STORAGE_DOWNLOAD_URL_STRING)
+      ) {
+        const imageRef = ref(storage, user?.photoURL);
+
+        if (imageRef) {
+          await deleteObject(imageRef);
+        }
+      }
 
       if (imageUrl) {
         const data = await uploadString(storageRef, imageUrl, "data_url");
         newImageUrl = await getDownloadURL(data?.ref);
+      }
 
-        if (user) {
-          await updateProfile(user, {
-            displayName,
-            photoURL: newImageUrl || '',
-          }).then(() => {
-            toast.success("프로필이 업데이트 되었습니다.");
+      if (user) {
+        await updateProfile(user, {
+          displayName,
+          photoURL: newImageUrl || "",
+        }).then(() => {
+          toast.success("프로필이 업데이트 되었습니다.");
 
-            navigate("/profile");
-          });
-        }
+          navigate("/profile");
+        });
       }
     } catch (error) {
       console.log(error);
