@@ -5,6 +5,7 @@ import PostDetail from "pages/posts/detail";
 import PostEdit from "pages/posts/edit";
 import PostNew from "pages/posts/new";
 import ProfilePage from "pages/profile";
+
 import ProfileEdit from "pages/profile/edit";
 import SearchPage from "pages/search";
 import LoginPage from "pages/users/login";
