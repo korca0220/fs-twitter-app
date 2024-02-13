@@ -1,12 +1,14 @@
 import Loader from "components/loader/Loader";
 import PostBox from "components/posts/PostBox";
-import { doc, getDoc } from "firebase/firestore";
+import { doc, onSnapshot } from "firebase/firestore";
 import { db } from "firebaseApp";
 import { PostProps } from "pages/home";
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
-import { IoIosArrowBack } from "react-icons/io";
+import CommentBox, { CommentProps } from "components/comments/CommentBox";
+import CommentForm from "components/comments/CommentForm";
+import PostHeader from "components/posts/PostHeader";
 
 export default function PostDetail() {
   const params = useParams();
@@ -17,9 +19,10 @@ export default function PostDetail() {
   const getPost = useCallback(async () => {
     if (params.id) {
       const docRef = doc(db, "posts", params.id);
-      const docSnap = await getDoc(docRef);
 
-      setPost({ ...(docSnap?.data() as PostProps), id: docSnap?.id });
+      onSnapshot(docRef, (doc) => {
+        setPost({ ...(doc?.data() as PostProps), id: doc.id });
+      });
     }
   }, [params.id]);
 
@@ -29,17 +32,20 @@ export default function PostDetail() {
 
   return (
     <div className="post">
-      <div className="post__header">
-        <button
-          type="button"
-          onClick={() => {
-            navigate(-1);
-          }}
-        >
-          <IoIosArrowBack className="post__header-btn" />
-        </button>
-      </div>
-      {post ? <PostBox post={post}></PostBox> : <Loader />}
+      <PostHeader />
+      {post ? (
+        <>
+          <PostBox post={post}></PostBox>
+          <CommentForm post={post} />
+          {post?.comments
+            ?.reverse()
+            ?.map((data: CommentProps, index: number) => (
+              <CommentBox data={data} post={post} key={index} />
+            ))}
+        </>
+      ) : (
+        <Loader />
+      )}
     </div>
   );
 }
