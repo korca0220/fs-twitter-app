@@ -1,3 +1,4 @@
+import FollowingBox from "components/following/FollowingBox";
 import AuthContext from "context/AuthContext";
 import {
   arrayRemove,
@@ -63,17 +64,23 @@ export default function PostBox({ post }: PostBoxProps) {
 
   return (
     <div className="post__box">
-      <Link to={`/posts/${post.id}`}>
-        <div className="post__box-profile">
-          <div className="post__flex">
-            {post.profileUrl ? (
-              <img />
-            ) : (
-              <FaUserCircle className="post__box-profile-icon" />
-            )}
-            <div className="post__email">{post.email}</div>
-            <div className="post__createdAt">{post.createdAt}</div>
+      <div className="post__box-profile">
+        <div className="post__flex">
+          {post.profileUrl ? (
+            <img />
+          ) : (
+            <FaUserCircle className="post__box-profile-icon" />
+          )}
+          <div className="post__flex--between">
+            <div className="post__flex">
+              <div className="post__email">{post.email}</div>
+              <div className="post__createdAt">{post.createdAt}</div>
+            </div>
+
+            <FollowingBox post={post} />
           </div>
+        </div>
+        <Link to={`/posts/${post.id}`}>
           <div className="post__box-content">{post.content}</div>
           {post?.imageUrl && (
             <div className="post__image-div">
@@ -86,6 +93,7 @@ export default function PostBox({ post }: PostBoxProps) {
               />{" "}
             </div>
           )}
+
           <div className="post-form__hashtags-outputs">
             {post?.hashTags?.map((tag, index) => (
               <span className="post-form__hashtags-tag" key={index}>
@@ -93,8 +101,9 @@ export default function PostBox({ post }: PostBoxProps) {
               </span>
             ))}
           </div>
-        </div>
-      </Link>
+        </Link>
+      </div>
+
       <div className="post__box-footer">
         {user?.uid === post?.uid && (
           <>
