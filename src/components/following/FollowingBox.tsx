@@ -16,7 +16,7 @@ interface FollowingProps {
   post: PostProps;
 }
 
-interface UserProps {
+export interface UserProps {
   id: string;
 }
 
