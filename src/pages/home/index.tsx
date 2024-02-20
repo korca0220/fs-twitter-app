@@ -42,7 +42,7 @@ export default function HomePage() {
       const ref = doc(db, "following", user.uid);
 
       onSnapshot(ref, (doc) => {
-        setFollowingIds([]);
+        setFollowingIds([""]);
         doc
           ?.data()
           ?.users?.map((user: UserProps) =>
