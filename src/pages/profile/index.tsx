@@ -1,3 +1,4 @@
+import { languageState } from "atom";
 import PostBox from "components/posts/PostBox";
 import AuthContext from "context/AuthContext";
 import {
@@ -11,6 +12,7 @@ import { db } from "firebaseApp";
 import { PostProps } from "pages/home";
 import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useRecoilState } from "recoil";
 
 const PROFILE_DEFAULT_URL = "/logo192.png";
 type TabType = "my" | "likes";
@@ -21,6 +23,8 @@ export default function ProfilePage() {
   const [likePosts, setLikePosts] = useState<PostProps[]>([]);
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
+
+  const [language, setLanguage] = useRecoilState(languageState);
 
   useEffect(() => {
     if (user) {
@@ -56,6 +60,12 @@ export default function ProfilePage() {
     }
   }, []);
 
+  const onClickLanguage = () => {
+    setLanguage(language == "ko" ? "en" : "ko");
+
+    localStorage.setItem("language", language == "ko" ? "en" : "ko");
+  };
+
   return (
     <div className="home">
       <div className="home__top">
@@ -68,13 +78,22 @@ export default function ProfilePage() {
             width={100}
             height={100}
           />
-          <button
-            type="button"
-            onClick={() => navigate("/profile/edit")}
-            className="profile__btn"
-          >
-            프로필 수정
-          </button>
+          <div className="profile__flex">
+            <button
+              type="button"
+              onClick={() => navigate("/profile/edit")}
+              className="profile__btn"
+            >
+              프로필 수정
+            </button>
+            <button
+              type="button"
+              onClick={onClickLanguage}
+              className="profile__btn--language"
+            >
+              {language == "ko" ? "한국어" : "English"}
+            </button>
+          </div>
         </div>
         <div className="profile__text">
           <div className="profile__name">{user?.displayName || "Google님"}</div>
