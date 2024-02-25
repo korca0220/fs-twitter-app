@@ -8,6 +8,7 @@ import { MdLogin, MdLogout } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
+import { useTranslation } from "hooks/useTranslation";
 import { AiOutlineSearch } from "react-icons/ai";
 import { IoMdNotificationsOutline } from "react-icons/io";
 
@@ -15,6 +16,8 @@ export default function MenuList() {
   const { user } = useContext(AuthContext);
 
   const navigate = useNavigate();
+
+  const t = useTranslation();
 
   const handleClickLogout = async () => {
     const auth = getAuth(app);
@@ -35,29 +38,29 @@ export default function MenuList() {
       <div className="footer__grid">
         <button type="button" onClick={() => navigate("/")}>
           <BsHouse />
-          Home
+          {t("MENU_HOME")}
         </button>
         <button type="button" onClick={() => navigate("/profile")}>
           <BiUserCircle />
-          Profile
+          {t("MENU_PROFILE")}
         </button>
         <button type="button" onClick={() => navigate("/search")}>
           <AiOutlineSearch />
-          Search
+          {t("MENU_SEARCH")}
         </button>
         <button type="button" onClick={() => navigate("/Notifications")}>
           <IoMdNotificationsOutline />
-          Notifications
+          {t("MENU_NOTI")}
         </button>
         {user === null ? (
           <button type="button" onClick={() => navigate("/user/login")}>
             <MdLogin />
-            Login
+            {t("MENU_LOGIN")}
           </button>
         ) : (
           <button type="button" onClick={handleClickLogout}>
             <MdLogout />
-            Logout
+            {t("MENU_LOGOUT")}
           </button>
         )}
       </div>
